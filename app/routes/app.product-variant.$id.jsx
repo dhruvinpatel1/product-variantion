@@ -32,7 +32,6 @@ export const loader = async ({ params, request }) => {
     const { admin, session } = await loadCriticalData({ request });
     const storeName = session.shop.replace('.myshopify.com', '')
     const productId = `gid://shopify/Product/${id}`;
-    // console.log("productId", productId)
 
     // 1. Get metafield definitions
     const defsRes = await admin.graphql(
@@ -190,8 +189,6 @@ export const action = async ({ request, params }) => {
     );
 
     const dupResJSON = await dupRes.json();
-
-    console.log("dupResJSON....................",dupResJSON.data.products.edges)
 
     const isDuplicate = dupResJSON.data.products.edges.some(
         (edge) => edge.node.inCollection

@@ -3,7 +3,7 @@
 client_id = "e359a0708cffa8ad39580dcc38140141"
 name = "product-variantion"
 handle = "product-variantion"
-application_url = "https://example.com/"
+application_url = "https://product-variation.onrender.com/"
 embedded = true
 
 [build]
@@ -25,7 +25,7 @@ api_version = "2025-07"
 scopes = "write_products"
 
 [auth]
-redirect_urls = [ "https://example.com/api/auth" ]
+redirect_urls = [ "https://product-variation.onrender.com/api/auth" ]
 
 [pos]
 embedded = false
