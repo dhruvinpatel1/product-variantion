@@ -275,6 +275,7 @@ export default function ProductForm() {
     const allowedFields = requiredFieldMap[collectionHandle]; // if undefined, collection is not allowed
     const isAllowedCollection = Boolean(allowedFields);
     // const success = new URLSearchParams(location.search).has("success");
+    
 
     useEffect(() => {
         if (!actionData) return;
