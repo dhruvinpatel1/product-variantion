@@ -14,8 +14,7 @@ import {
     useActionData,
     Form,
     useNavigation,
-    json,
-    redirect,
+    data,
 } from "@remix-run/react";
 import { authenticate } from "../shopify.server"; // from Shopify Remix app template
 import { useEffect, useState } from "react";
@@ -154,7 +153,7 @@ export const action = async ({ request, params }) => {
         // ❌ Check for missing required fields
         const missing = requiredFields.filter((f) => !formValues[f]);
         if (missing.length > 0) {
-            return Response.json(
+            return data(
                 {
                     status: "error",
                     error: `Missing fields: ${missing.join(", ")}`,
@@ -196,7 +195,7 @@ export const action = async ({ request, params }) => {
         );
 
         if (isDuplicate) {
-            return Response.json(
+            return data(
                 {
                     status: "error",
                     error: "A product with the same variation already exists.",
@@ -239,7 +238,7 @@ export const action = async ({ request, params }) => {
 
         const errors = saveMetafieldsJSON.data.metafieldsSet.userErrors;
         if (errors.length > 0) {
-            return Response.json(
+            return data(
                 {
                     status: "error",
                     error: errors.map((e) => e.message).join(", "),
@@ -249,13 +248,13 @@ export const action = async ({ request, params }) => {
         }
 
         // ✅ Success
-        return Response.json({
+        return data({
             status: "success",
             success: "Product Variation saved successfully.",
         });
     } catch (err) {
         console.error("Action failed:", err);
-        return Response.json(
+        return data(
             {
                 status: "error",
                 error: err.message || "Something went wrong on the server.",
