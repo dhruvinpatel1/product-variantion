@@ -279,10 +279,9 @@ export default function ProductForm() {
     useEffect(() => {
         if (!actionData) return;
 
-        if (actionData.status === "error") {
-            setError(actionData.error);
-        }
-        else if (actionData?.status === "success") {
+        if (actionData?.data?.status === "error") {
+            setError(actionData.data.error);
+        } else if (actionData?.data?.status === "success") {
             setToast(true);
             const timeout = setTimeout(() => setToast(false), 4000);
             return () => clearTimeout(timeout);
@@ -326,7 +325,7 @@ export default function ProductForm() {
                             {/* ✅ Show success toast/banner */}
                             {toast && (
                                 <Banner status="success" title="Success">
-                                    {actionData?.success}
+                                    {actionData?.data?.success}
                                 </Banner>
                             )}
 
