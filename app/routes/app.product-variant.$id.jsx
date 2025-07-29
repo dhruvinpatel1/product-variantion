@@ -136,39 +136,40 @@ async function loadCriticalData({ request }) {
 }
 
 export const action = async ({ request, params }) => {
-    const { admin } = await loadCriticalData({ request });
-    const form = await request.formData();
-    const productId = form.get("productId");
-    const collectionHandle = form.get("collectionHandle");
-    const collectionId = form.get("collectionId");
+    try {
+        const { admin } = await loadCriticalData({ request });
+        const form = await request.formData();
+        const productId = form.get("productId");
+        const collectionHandle = form.get("collectionHandle");
+        const collectionId = form.get("collectionId");
 
-    const requiredFields = requiredFieldMap[collectionHandle] || [];
+        const requiredFields = requiredFieldMap[collectionHandle] || [];
 
-    // ✅ Dynamically build formValues
-    const formValues = {};
-    for (const field of requiredFields) {
-        formValues[field] = form.get(field);
-    }
+        // ✅ Dynamically build formValues
+        const formValues = {};
+        for (const field of requiredFields) {
+            formValues[field] = form.get(field);
+        }
 
-    // ❌ Check for missing required fields
-    const missing = requiredFields.filter((f) => !formValues[f]);
-    if (missing.length > 0) {
-        return Response.json(
-            {
-                status: "error",
-                error: `Missing fields: ${missing.join(", ")}`,
-            },
-            { status: 400 }
-        );
-    }
+        // ❌ Check for missing required fields
+        const missing = requiredFields.filter((f) => !formValues[f]);
+        if (missing.length > 0) {
+            return Response.json(
+                {
+                    status: "error",
+                    error: `Missing fields: ${missing.join(", ")}`,
+                },
+                { status: 400 }
+            );
+        }
 
-    // Check for duplicate product
-    const queryFilters = requiredFields
-        .map((key) => `metafields.custom.${key.toLowerCase().replace(/\s/g, "_")}:'${formValues[key]}'`)
-        .join(" AND ");
+        // Check for duplicate product
+        const queryFilters = requiredFields
+            .map((key) => `metafields.custom.${key.toLowerCase().replace(/\s/g, "_")}:'${formValues[key]}'`)
+            .join(" AND ");
 
-    const dupRes = await admin.graphql(
-        `#graphql
+        const dupRes = await admin.graphql(
+            `#graphql
         query CheckDuplicateProduct($query: String!, $collectionId: ID!) {
             products(first: 100, query: $query) {
             edges {
@@ -180,41 +181,41 @@ export const action = async ({ request, params }) => {
             }
         }
         `,
-        {
-            variables: {
-                query: queryFilters,
-                collectionId,
-            },
-        }
-    );
-
-    const dupResJSON = await dupRes.json();
-
-    const isDuplicate = dupResJSON.data.products.edges.some(
-        (edge) => edge.node.inCollection
-    );
-
-    if (isDuplicate) {
-        return Response.json(
             {
-                status: "error",
-                error: "A product with the same variation already exists.",
-            },
-            { status: 400 }
+                variables: {
+                    query: queryFilters,
+                    collectionId,
+                },
+            }
         );
-    }
 
-    // 📝 Prepare metafields to save
-    const metafields = requiredFields.map((label) => ({
-        ownerId: productId,
-        namespace: "custom",
-        key: label.toLowerCase().replace(/\s/g, "_"),
-        type: "single_line_text_field",
-        value: formValues[label],
-    }));
+        const dupResJSON = await dupRes.json();
 
-    const saveMetafields = await admin.graphql(
-        `#graphql
+        const isDuplicate = dupResJSON.data.products.edges.some(
+            (edge) => edge.node.inCollection
+        );
+
+        if (isDuplicate) {
+            return Response.json(
+                {
+                    status: "error",
+                    error: "A product with the same variation already exists.",
+                },
+                { status: 400 }
+            );
+        }
+
+        // 📝 Prepare metafields to save
+        const metafields = requiredFields.map((label) => ({
+            ownerId: productId,
+            namespace: "custom",
+            key: label.toLowerCase().replace(/\s/g, "_"),
+            type: "single_line_text_field",
+            value: formValues[label],
+        }));
+
+        const saveMetafields = await admin.graphql(
+            `#graphql
         mutation MetafieldsSet($metafields: [MetafieldsSetInput!]!) {
             metafieldsSet(metafields: $metafields) {
                 metafields {
@@ -229,29 +230,39 @@ export const action = async ({ request, params }) => {
                 }
             }
         }`,
-        {
-            variables: { metafields },
+            {
+                variables: { metafields },
+            }
+        );
+
+        const saveMetafieldsJSON = await saveMetafields.json()
+
+        const errors = saveMetafieldsJSON.data.metafieldsSet.userErrors;
+        if (errors.length > 0) {
+            return Response.json(
+                {
+                    status: "error",
+                    error: errors.map((e) => e.message).join(", "),
+                },
+                { status: 400 }
+            );
         }
-    );
 
-    const saveMetafieldsJSON = await saveMetafields.json()
-
-    const errors = saveMetafieldsJSON.data.metafieldsSet.userErrors;
-    if (errors.length > 0) {
+        // ✅ Success
+        return Response.json({
+            status: "success",
+            success: "Product Variation saved successfully.",
+        });
+    } catch (err) {
+        console.error("Action failed:", err);
         return Response.json(
             {
                 status: "error",
-                error: errors.map((e) => e.message).join(", "),
+                error: err.message || "Something went wrong on the server.",
             },
-            { status: 400 }
+            { status: 500 }
         );
     }
-
-    // ✅ Success
-    return Response.json({
-        status: "success",
-        success: "Product Variation saved successfully.",
-    });
 };
 
 export default function ProductForm() {
