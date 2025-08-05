@@ -10,8 +10,30 @@ export const action = async ({ request }) => {
     }
 
     const productId = payload.admin_graphql_api_id;
-    console.log(`🔔 Webhook Topic: ${topic} | Shop: ${shop}`);
-    console.log("📦 Product ID:", productId);
+
+    // Step 1: Fetch 'System Source' metafield
+    const fetchMetafieldsQuery = `
+      query FetchSystemSource($id: ID!) {
+        product(id: $id) {
+          metafield(namespace: "custom", key: "system_source") {
+            value
+          }
+        }
+      }
+    `;
+
+    const metafieldResult = await admin.graphql(fetchMetafieldsQuery, {
+      variables: { id: productId },
+    });
+
+    const metafieldData = await metafieldResult.json();
+
+    const systemSourceValue = metafieldData?.data?.product?.metafield?.value;
+
+    if (systemSourceValue === "node-admin") {
+      console.log("⛔ Skipping metafield clearing due to System Source = node-admin");
+      return new Response("Skipped: Product managed by node-admin", { status: 200 });
+    }
 
     const metafieldsToClear = [
       { namespace: 'custom', key: 'shape' },
