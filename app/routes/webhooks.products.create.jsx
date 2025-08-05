@@ -13,6 +13,8 @@ export const action = async ({ request }) => {
     console.log(`🔔 Webhook Topic: ${topic} | Shop: ${shop}`);
     console.log("📦 Product ID:", productId);
 
+    console.log("admin", admin)
+
     const metafieldsToClear = [
       { namespace: 'custom', key: 'shape' },
       { namespace: 'custom', key: 'metal' },
