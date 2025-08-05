@@ -24,7 +24,7 @@ const shopify = shopifyApp({
     },
     PRODUCTS_CREATE: {
       deliveryMethod: DeliveryMethod.Http,
-      callbackUrl: '/webhooks/products/create1',
+      callbackUrl: '/webhooks/products/create',
     },
   },
   hooks: {
