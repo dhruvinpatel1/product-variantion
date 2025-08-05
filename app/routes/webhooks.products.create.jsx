@@ -2,7 +2,7 @@ import { authenticate } from "../shopify.server";
 
 export const action = async ({ request }) => {
   try {
-    const { payload } = await authenticate.webhook(request);
+    const { topic, shop, payload, admin } = await authenticate.webhook(request);
 
     if (!payload?.admin_graphql_api_id) {
       console.error("❌ Missing product ID in webhook payload");
@@ -10,37 +10,8 @@ export const action = async ({ request }) => {
     }
 
     const productId = payload.admin_graphql_api_id;
+    console.log(`🔔 Webhook Topic: ${topic} | Shop: ${shop}`);
     console.log("📦 Product ID:", productId);
-
-    // Authenticate admin API (you must have access to the session or store it per shop)
-    const { admin } = await authenticate.admin(request);
-    console.log("admin", admin)
-
-    // Step 1: Fetch 'System Source' metafield
-    const fetchMetafieldsQuery = `
-      query FetchSystemSource($id: ID!) {
-        product(id: $id) {
-          metafield(namespace: "custom", key: "system_source") {
-            value
-          }
-        }
-      }
-    `;
-
-    const metafieldResult = await admin.graphql(fetchMetafieldsQuery, {
-      variables: { id: productId },
-    });
-
-    const metafieldData = await metafieldResult.json();
-
-    console.log("metafieldData",metafieldData)
-
-    const systemSourceValue = metafieldData?.data?.product?.metafield?.value;
-
-    if (systemSourceValue === "node-admin") {
-      console.log("⛔ Skipping metafield clearing due to System Source = node-admin");
-      return new Response("Skipped: Product managed by node-admin", { status: 200 });
-    }
 
     const metafieldsToClear = [
       { namespace: 'custom', key: 'shape' },
