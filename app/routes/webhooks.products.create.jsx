@@ -10,6 +10,7 @@ export const action = async ({ request }) => {
     }
 
     const productId = payload.admin_graphql_api_id;
+    console.log("📦 Product ID:", productId);
 
     // Step 1: Fetch 'System Source' metafield
     const fetchMetafieldsQuery = `
@@ -27,6 +28,8 @@ export const action = async ({ request }) => {
     });
 
     const metafieldData = await metafieldResult.json();
+
+    console.log("metafieldData",metafieldData)
 
     const systemSourceValue = metafieldData?.data?.product?.metafield?.value;
 
