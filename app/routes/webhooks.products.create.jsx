@@ -10,7 +10,7 @@ export const action = async ({ request }) => {
     }
 
     const productId = payload.admin_graphql_api_id;
-    console.log(`🔔 Webhook Topic: ${topic} | Shop: ${shop}`);
+    console.log(`🔔............. Webhook Topic: ${topic} | Shop: ${shop}`);
     console.log(`session Topic: ${session}`);
     console.log("📦 Product ID:", productId);
 
