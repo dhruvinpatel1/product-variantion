@@ -2,6 +2,9 @@ import { authenticate } from "../shopify.server";
 
 export const action = async ({ request }) => {
   try {
+    const dp11 = await authenticate.admin(request);
+    console.log("dp11........................",dp11)
+    
     const { topic,session, shop, payload, admin } = await authenticate.webhook(request);
 
     if (!payload?.admin_graphql_api_id) {
