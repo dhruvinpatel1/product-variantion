@@ -24,10 +24,6 @@ const shopify = shopifyApp({
     },
     PRODUCTS_CREATE: {
       deliveryMethod: DeliveryMethod.Http,
-      callbackUrl: '/webhooks/app/uninstalled',
-    },
-    PRODUCTS_CREATE: {
-      deliveryMethod: DeliveryMethod.Http,
       callbackUrl: '/webhooks/products/create',
     },
   },
@@ -37,8 +33,8 @@ const shopify = shopifyApp({
     },
   },
   future: {
-    v3_webhookAdminContext: true,
-    v3_authenticatePublic: true,
+    unstable_newEmbeddedAuthStrategy: true,
+    removeRest: true,
   },
   ...(process.env.SHOP_CUSTOM_DOMAIN
     ? { customShopDomains: [process.env.SHOP_CUSTOM_DOMAIN] }

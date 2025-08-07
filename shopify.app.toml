@@ -22,10 +22,6 @@ api_version = "2025-07"
 
   [[webhooks.subscriptions]]
   topics = [ "products/create" ]
-  uri = "/webhooks/app/uninstalled"
-
-  [[webhooks.subscriptions]]
-  topics = [ "products/create" ]
   uri = "/webhooks/products/create"
 
 [access_scopes]
