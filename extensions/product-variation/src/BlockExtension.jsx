@@ -13,6 +13,7 @@ import {
   Link,
 } from '@shopify/ui-extensions-react/admin';
 
+
 // The target used here must match the target used in the extension's toml file (./shopify.extension.toml)
 const TARGET = 'admin.product-details.block.render';
 
