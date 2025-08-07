@@ -24,6 +24,10 @@ const shopify = shopifyApp({
     },
     PRODUCTS_CREATE: {
       deliveryMethod: DeliveryMethod.Http,
+      callbackUrl: '/webhooks/app/uninstalled',
+    },
+    PRODUCTS_CREATE: {
+      deliveryMethod: DeliveryMethod.Http,
       callbackUrl: '/webhooks/products/create',
     },
   },
