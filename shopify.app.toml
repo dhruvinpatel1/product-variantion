@@ -29,7 +29,7 @@ api_version = "2025-07"
 scopes = "read_products,write_products"
 
 [auth]
-redirect_urls = [ "https://product-variation.onrender.com/api/auth" ]
+redirect_urls = ["https://product-variation.onrender.com/auth/callback", "https://product-variation.onrender.com/auth/shopify/callback", "https://product-variation.onrender.com/api/auth/callback"]
 
 [pos]
 embedded = false

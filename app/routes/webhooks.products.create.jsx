@@ -2,10 +2,8 @@ import { authenticate } from "../shopify.server";
 
 export const action = async ({ request }) => {
   try {
-    const { admin, session } = await authenticate.admin(request);
-    console.log("dp11........................", admin, session)
-
-    const { topic, shop, payload } = await authenticate.webhook(request);
+    console.log("authenticate...................", authenticate, "request....................", request)
+    const { topic, session, shop, payload, admin } = await authenticate.webhook(request);
 
     if (!payload?.admin_graphql_api_id) {
       console.error("❌ Missing product ID in webhook payload");
