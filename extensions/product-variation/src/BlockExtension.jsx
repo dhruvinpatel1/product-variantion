@@ -320,19 +320,19 @@ function App() {
                 <Button kind="primary" onPress={handleSave}>
                   Save
                 </Button>}
-              {/* <Link to={`/app/product-variant/${productLink[productLink.length - 1]}`}> */}
+              <Link to={`/app/product-variant/${productLink[productLink.length - 1]}`}>
                 <Button variant="primary">
                   Add or Edit Product Description
                 </Button>
-              {/* </Link> */}
+              </Link>
             </InlineStack>
           </BlockStack>
         </> : <BlockStack inlineAlignment='center' blockAlignment='center'>
-          {/* <Link to={`/app/product-variant/${productLink[productLink.length - 1]}`}> */}
+          <Link to={`/app/product-variant/${productLink[productLink.length - 1]}`}>
             <Button variant="primary">
               Add or Edit Product Description
             </Button>
-          {/* </Link> */}
+          </Link>
         </BlockStack>}
       </BlockStack>
     </AdminBlock>
