@@ -2,7 +2,7 @@ import { authenticate } from "../shopify.server";
 
 export const action = async ({ request }) => {
   try {
-    const { topic, shop, payload, admin } = await authenticate.webhook(request);
+    const { topic,session, shop, payload, admin } = await authenticate.webhook(request);
 
     if (!payload?.admin_graphql_api_id) {
       console.error("❌ Missing product ID in webhook payload");
@@ -11,6 +11,7 @@ export const action = async ({ request }) => {
 
     const productId = payload.admin_graphql_api_id;
     console.log(`🔔 Webhook Topic: ${topic} | Shop: ${shop}`);
+    console.log(`session Topic: ${session} | Shop: ${shop}`);
     console.log("📦 Product ID:", productId);
 
     // Step 1: Fetch 'System Source' metafield
