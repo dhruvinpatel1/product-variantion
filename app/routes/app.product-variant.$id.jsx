@@ -33,7 +33,7 @@ export const loader = async ({ params, request }) => {
             product(id: $id) {
             id
             title
-            metafield(namespace: "custom", key: "product_description") {
+            metafield(namespace: "productdata", key: "product_description") {
                 value
                 }
             }
@@ -98,7 +98,7 @@ export const action = async ({ request }) => {
                     metafields: [
                         {
                             ownerId: productId,
-                            namespace: "custom",
+                            namespace: "productdata",
                             key: "product_description",
                             type: "json",
                             value: productDescriptionRaw,
